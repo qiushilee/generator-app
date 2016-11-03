@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <title><%= appname %></title>
+  <meta name="description" content="">
+  <link rel="stylesheet" href="common.css">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+  <header id="header">
+    <h1></h1>
+    <h2 class="title"><%= appname %></h2>
+  </header>
+
+  <main id="main">
+    <aside id="aside"></aside>
+    <div class="main-page"></div>
+  </main>
+
+  <script>
+    var feature = {
+      templatestrings: function() {
+        var supports;
+        try {
+          // A number of tools, including uglifyjs and require, break on a raw "`", so
+          // use an eval to get around that.
+          eval('``');
+          supports = true;
+        } catch (e) {}
+        return !!supports;
+      },
+
+      promises: function() {
+        return 'Promise' in window &&
+          // Some of these methods are missing from
+          // Firefox/Chrome experimental implementations
+          'resolve' in window.Promise &&
+          'reject' in window.Promise &&
+          'all' in window.Promise &&
+          'race' in window.Promise &&
+          // Older version of the spec had a resolver object
+          // as the arg rather than a function
+          (function() {
+            var resolve;
+            new window.Promise(function(r) {
+              resolve = r;
+            });
+            return typeof resolve === 'function';
+          }());
+      }
+    };
+
+    function loadScript(src, callback) {
+      callback = callback || function() {};
+      var script = document.createElement('script');
+      script.src = src;
+      script.onload = function() {
+        callback(script);
+      };
+      document.body.appendChild(script);
+      return script;
+    }
+
+    if (!feature.templatestrings() || !feature.promises()) {
+      document.querySelector('#header').classList.add('hidden');
+      document.querySelector('#main').classList.add('hidden');
+      document.body.innerHTML = '<h1><a href="http://www.firefox.com.cn">下载 Firefox</a></h1><h1><a href="http://down.tech.sina.com.cn/page/40975.html">下载 Chrome</a></h1>';
+      alert('您的浏览器版本过低，导致无法正常使用网站，请使用最新版的 Firefox, Chrome');
+    } else {
+      loadScript('tmp/scripts/vendor.bundle.js', function() {
+        loadScript('tmp/scripts/main.js');
+      });
+    }
+  </script>
+</body>
+
+</html>

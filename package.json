@@ -1,0 +1,21 @@
+{
+  "name": "generator-app",
+  "version": "1.0.0",
+  "description": "Create a new base backbone.js web application",
+  "main": "generators/app/index.js",
+  "files": [
+    "generators/app",
+    "generators/view",
+    "generators/model"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "showbei@gmail.com",
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^0.24.1"
+  }
+}
