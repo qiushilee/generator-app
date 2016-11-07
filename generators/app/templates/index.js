@@ -8,9 +8,7 @@ import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 <% } -%>
 import Backbone from 'backbone';
-<% if (router) { -%>
-import './routes/<%= router %>';
-<% } -%>
+import './routes/main';
 
 Backbone.on('error', () => {
   console.error('接口发生错误');

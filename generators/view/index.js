@@ -9,7 +9,7 @@ module.exports = generators.Base.extend({
     }
   },
   writing: function() {
-    const destPath = `${this.config.get('appname')}/app/web/${this.options.name}`;
+    const destPath = `${this.config.get('basePath')}/app/web/${this.options.name}`;
     const data = {
       name: this.options.name,
       model: this.config.get(`${this.options.name}Model`)
@@ -37,7 +37,7 @@ module.exports = generators.Base.extend({
     }
 
     //Update router
-    const routerPath = `${this.config.get('appname')}/app/routes/${this.config.get('router')}.js`;
+    const routerPath = `${this.config.get('basePath')}/app/routes/main.js`;
     let routerFile = htmlWiring.readFileAsString(routerPath);
     routerFile = routerFile
     .replace(/';\n\n/, `';\nimport ${this.options.name} from '../web/${this.options.name}/view';\n\n`)

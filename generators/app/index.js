@@ -1,5 +1,6 @@
 const fs = require('fs');
 const generators = require('yeoman-generator');
+const path = require('path');
 
 module.exports = generators.Base.extend({
   initialize: function() {
@@ -13,7 +14,9 @@ module.exports = generators.Base.extend({
       type: String,
       defaults: 'WebApplication'
     });
-    this.config.set('skipInstall', this.options['skip-install']);
+    this.basePath = path.resolve(`./${this.appname}`);
+    this.config.set('basePath', this.basePath);
+    this.config.set('appname', this.appname);
   },
   prompting: function () {
     return this.prompt([{
@@ -23,28 +26,26 @@ module.exports = generators.Base.extend({
       choices: [
         {
           name: '折线图',
-          value: 'line',
+          value: 'line'
         },
         {
           name: '圆饼',
-          value: 'pie',
+          value: 'pie'
         },
         {
           name: '柱状图',
-          value: 'bar',
-        },
+          value: 'bar'
+        }
       ]
     }]).then(function (answers) {
-      this.config.set('appname', this.appname);
       this.config.set('echarts', answers.echarts);
-      this.config.set('router', 'main');
     }.bind(this));
   },
   setupEnv: function() {
-    fs.mkdirSync(this.config.get('appname'));
-    fs.mkdirSync(`${this.config.get('appname')}/app`);
-    fs.mkdirSync(`${this.config.get('appname')}/app/routes`);
-    fs.mkdirSync(`${this.config.get('appname')}/app/web`);
+    fs.mkdirSync(this.basePath);
+    fs.mkdirSync(`${this.basePath}/app`);
+    fs.mkdirSync(`${this.basePath}/app/routes`);
+    fs.mkdirSync(`${this.basePath}/app/web`);
   },
   write: function() {
     const data = this.config.getAll();
@@ -58,35 +59,35 @@ module.exports = generators.Base.extend({
     ].forEach((file) => {
       this.fs.copyTpl(
         this.templatePath(file),
-        this.destinationPath(`${this.config.get('appname')}/${file}`),
+        this.destinationPath(`${this.config.get('basePath')}/${file}`),
         data
       );
     });
 
     this.fs.copyTpl(
       this.templatePath('common.css'),
-      this.destinationPath(`${this.config.get('appname')}/app/common.css`),
+      this.destinationPath(`${this.config.get('basePath')}/app/common.css`),
       data
     );
     this.fs.copyTpl(
       this.templatePath('index.html'),
-      this.destinationPath(`${this.config.get('appname')}/app/index.html`),
+      this.destinationPath(`${this.config.get('basePath')}/app/index.html`),
       data
     );
     this.fs.copyTpl(
       this.templatePath('_package.json'),
-      this.destinationPath(`${this.config.get('appname')}/package.json`),
+      this.destinationPath(`${this.config.get('basePath')}/package.json`),
       data
     );
     this.fs.copyTpl(
       this.templatePath('index.js'),
-      this.destinationPath(`${this.config.get('appname')}/app/app.js`),
+      this.destinationPath(`${this.config.get('basePath')}/app/app.js`),
       data
     );
   },
   npm: function() {
     try {
-      process.chdir(this.config.get('appname'));
+      process.chdir(this.config.get('basePath'));
       this.installDependencies({
         bower: false,
         npm: true,
@@ -97,15 +98,5 @@ module.exports = generators.Base.extend({
     } catch (err) {
       console.log(`chdir: ${err}`);
     }
-  },
-  install: function() {
-    this.composeWith('backbone:router', {
-      options: {
-        name: this.config.get('router'),
-        views: ['home']
-      }
-    });
-    this.composeWith('backbone:view', { options: { name: 'home', skipChange: true } });
-    this.composeWith('backbone:model', { options: { name: 'home', skipChange: true } });
   }
 });

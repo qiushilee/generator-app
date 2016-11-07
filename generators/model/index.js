@@ -13,7 +13,7 @@ module.exports = generators.Base.extend({
       this.log('backbone:model\t\tModel 已存在，当前不允许覆盖或创建多个Model。')
       return false;
     }
-    const pagePath = `${this.config.get('appname')}/app/web/${this.options.name}`;
+    const pagePath = `${this.config.get('basePath')}/app/web/${this.options.name}`;
     const modelPath = this.destinationPath(`${pagePath}/model.js`);
     this.fs.copyTpl(this.templatePath('main.js'), modelPath, { name: this.options.name });
     this.config.set(`${this.options.name}Model`, true);

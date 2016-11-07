@@ -1,8 +1,11 @@
 {
-  "name": "generator-app",
+  "name": "generator-webapp-cli",
   "version": "1.0.0",
   "description": "Create a new base backbone.js web application",
   "main": "generators/app/index.js",
+  "bin": {
+    "webapp": "index.js"
+  },
   "files": [
     "generators/app",
     "generators/view",
@@ -12,10 +15,15 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "showbei@gmail.com",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:qiushilee/generator-app.git"
+  },
   "keywords": [
     "yeoman-generator"
   ],
   "dependencies": {
+    "yeoman-environment": "^1.6.5",
     "yeoman-generator": "^0.24.1"
   }
 }

@@ -10,7 +10,7 @@ module.exports = generators.Base.extend({
   writing: function() {
     this.fs.copyTpl(
       this.templatePath('main.js'),
-      this.destinationPath(`${this.config.get('appname')}/app/routes/${this.options.name}.js`),
+      this.destinationPath(`${this.config.get('basePath')}/app/routes/${this.options.name}.js`),
       this.options
     );
   }
