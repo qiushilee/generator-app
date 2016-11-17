@@ -14,12 +14,14 @@ module.exports = generators.Base.extend({
     };
   },
   setupEnv: function() {
-    this.viewPath = `app/web/${this.options.name}`;
-    fs.mkdirSync(this.viewPath);
-    fs.mkdirSync(`${this.viewPath}/views`);
-    fs.mkdirSync(`${this.viewPath}/models`);
-    fs.mkdirSync(`${this.viewPath}/templates`);
-    fs.mkdirSync(`${this.viewPath}/styles`);
+    try {
+      this.viewPath = `app/web/${this.options.name}`;
+      fs.mkdirSync(this.viewPath);
+      fs.mkdirSync(`${this.viewPath}/views`);
+      fs.mkdirSync(`${this.viewPath}/models`);
+      fs.mkdirSync(`${this.viewPath}/templates`);
+      fs.mkdirSync(`${this.viewPath}/styles`);
+    } catch(e) {}
   },
   templates: function() {
     this.fs.copyTpl(
@@ -46,25 +48,27 @@ module.exports = generators.Base.extend({
     }
   },
   updateRouter: function() {
-    const routerPath = 'app/router.js';
-    let routerFile = htmlWiring.readFileAsString(routerPath);
-    //Import view
-    routerFile = routerFile.replace(/';\n\n/, `';\nimport ${this.options.name} from './web/${this.options.name}/view';\n\n`);
-    //Add route
-    if (routerFile.match(/}\);\n  }/)) {
-      routerFile = routerFile.replace(/}\);\n  }/, `});\n
-    this.route('${this.options.name}', '${this.options.name}', function() {
-      this.view.destroy();
-      this.view = new ${this.options.name}();
-    });\n  }`);
-    } else {
-      //First
-      routerFile = routerFile.replace(/\n  }\n/, `
-    this.route('', '${this.options.name}', function() {
-      this.view.destroy();
-      this.view = new ${this.options.name}();
-    });\n  }\n`);
-    }
-    this.fs.write(this.destinationPath(routerPath), routerFile);
+    try {
+      const routerPath = 'app/router.js';
+      let routerFile = htmlWiring.readFileAsString(routerPath);
+      //Import view
+      routerFile = routerFile.replace(/';\n\n/, `';\nimport ${this.options.name} from './web/${this.options.name}/view';\n\n`);
+      //Add route
+      if (routerFile.match(/}\);\n  }/)) {
+        routerFile = routerFile.replace(/}\);\n  }/, `});\n
+      this.route('${this.options.name}', '${this.options.name}', function() {
+        this.view.destroy();
+        this.view = new ${this.options.name}();
+      });\n  }`);
+      } else {
+        //First
+        routerFile = routerFile.replace(/\n  }\n/, `
+      this.route('', '${this.options.name}', function() {
+        this.view.destroy();
+        this.view = new ${this.options.name}();
+      });\n  }\n`);
+      }
+      this.fs.write(this.destinationPath(routerPath), routerFile);
+    } catch(e) {}
   }
 });
