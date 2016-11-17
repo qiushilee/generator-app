@@ -1,6 +1,6 @@
 {
   "name": "generator-webapp-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Create a new base backbone.js web application",
   "main": "generators/app/index.js",
   "bin": {
