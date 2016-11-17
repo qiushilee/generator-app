@@ -10,18 +10,14 @@ module.exports = {
       'jquery',
       'backbone',
       'lodash',
-<% if (echarts.length > 0) { -%>
       'echarts/lib/echarts',
-<% } -%>
-<% echarts.forEach((chart) => { -%>
-      'echarts/lib/chart/<%= chart %>',
-<% }); -%>
-<% if (echarts.length > 0) { -%>
+      'echarts/lib/chart/line',
+      'echarts/lib/chart/pie',
+      'echarts/lib/chart/bar',
       'echarts/lib/component/axis',
       'echarts/lib/component/legend',
       'echarts/lib/component/tooltip',
       'echarts/lib/component/title'
-<% } -%>
     ]
   },
   output: {

@@ -2,16 +2,16 @@
  * <%= name %>
  */
 import Backbone from 'backbone';
-import Tpl from './main.hbs';
-import Style from './main.scss';
+import MainTemplate from './templates/main.hbs';
+import Style from './styles/main.scss';
 <% if (model) { -%>
-import Model from './model';
+import Model from './models/main';
 <% } -%>
 
 export default Backbone.View.extend({
   el: '.main-page',
 
-  template: Tpl,
+  template: MainTemplate,
 <% if (model) { -%>
   model: new Model(),
 <% } -%>

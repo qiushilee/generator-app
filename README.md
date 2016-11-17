@@ -6,22 +6,15 @@
 `npm i -g generator-webapp-cli`
 
 ## 示例
-`webapp new <appName Default: current directory>`
+* 新建项目：`mkdir application && cd application && webapp new spa`
+* 创建view： `webapp g view list`
+* 创建model： `webapp g model detail`
+* 启动：`webapp run`
+* 构建：`webapp build` 构建后的文件在 ./dist/tmp
 
-创建一个新的目录并且运行 `npm install` 和 `npm start`，之后会自动打开浏览器。
-
-`webapp g view <viewName Default: home>`
-
-生成 view。
-
-`webapp g model <modelName Default: home>`
-
-生成 model。
-
-## 命令
-* 启动 `npm start`
-* 构建 `webpack` 构建后的文件在 ./dist/tmp
-
+## 帮助
+* `webapp new <appName>` 创建一个新的目录并且运行 npm install 和 npm start。
+* `webapp generate <blueprint> <name>` 从模板生成代码。alias: g。可用的模板：view  <name>  生成 view。model <name>  生成 model。
 
 ## 功能
 * ES6 语法支持

@@ -1,6 +1,6 @@
 import Backbone from 'backbone';
 <% views.forEach((view) => { -%>
-import <%= view %> from '../web/<%= view %>/view';
+import <%= view %> from './web/<%= view %>/view';
 <% }); -%>
 
 /**
@@ -11,7 +11,7 @@ var Router = Backbone.Router.extend({
   view: {
     destroy: function() {}
   },
-  
+
   initialize: function() {
 <% views.forEach((view) => { -%>
     this.route('<%= view %>', '<%= view %>', function() {

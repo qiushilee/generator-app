@@ -1,11 +1,7 @@
 const fs = require('fs');
 const generators = require('yeoman-generator');
-const path = require('path');
 
 module.exports = generators.Base.extend({
-  initialize: function() {
-    this.config.save();
-  },
   constructor: function() {
     generators.Base.apply(this, arguments);
     this.argument('appname', {
@@ -14,42 +10,14 @@ module.exports = generators.Base.extend({
       type: String,
       defaults: 'WebApplication'
     });
-    this.basePath = path.resolve(`./${this.appname}`);
-    this.config.set('basePath', this.basePath);
     this.config.set('appname', this.appname);
   },
-  prompting: function () {
-    return this.prompt([{
-      type    : 'checkbox',
-      name    : 'echarts',
-      message : '需要 Echarts 图表吗？',
-      choices: [
-        {
-          name: '折线图',
-          value: 'line'
-        },
-        {
-          name: '圆饼',
-          value: 'pie'
-        },
-        {
-          name: '柱状图',
-          value: 'bar'
-        }
-      ]
-    }]).then(function (answers) {
-      this.config.set('echarts', answers.echarts);
-    }.bind(this));
-  },
   setupEnv: function() {
-    fs.mkdirSync(this.basePath);
-    fs.mkdirSync(`${this.basePath}/app`);
-    fs.mkdirSync(`${this.basePath}/app/routes`);
-    fs.mkdirSync(`${this.basePath}/app/web`);
+    fs.mkdirSync('app');
+    fs.mkdirSync('app/web');
   },
-  write: function() {
-    const data = this.config.getAll();
-    //Project files
+  projectFile: function() {
+    this.data = this.config.getAll();
     [
       'webpack.config.js',
       '.editorconfig',
@@ -59,44 +27,31 @@ module.exports = generators.Base.extend({
     ].forEach((file) => {
       this.fs.copyTpl(
         this.templatePath(file),
-        this.destinationPath(`${this.config.get('basePath')}/${file}`),
-        data
+        this.destinationPath(file),
+        this.data
       );
     });
-
+    this.fs.copyTpl(
+      this.templatePath('_package.json'),
+      this.destinationPath('package.json'),
+      this.data
+    );
+  },
+  write: function() {
     this.fs.copyTpl(
       this.templatePath('common.css'),
-      this.destinationPath(`${this.config.get('basePath')}/app/common.css`),
-      data
+      this.destinationPath('app/common.css'),
+      this.data
     );
     this.fs.copyTpl(
       this.templatePath('index.html'),
-      this.destinationPath(`${this.config.get('basePath')}/app/index.html`),
-      data
-    );
-    this.fs.copyTpl(
-      this.templatePath('_package.json'),
-      this.destinationPath(`${this.config.get('basePath')}/package.json`),
-      data
+      this.destinationPath('app/index.html'),
+      this.data
     );
     this.fs.copyTpl(
       this.templatePath('index.js'),
-      this.destinationPath(`${this.config.get('basePath')}/app/app.js`),
-      data
+      this.destinationPath('app/app.js'),
+      this.data
     );
-  },
-  npm: function() {
-    try {
-      process.chdir(this.config.get('basePath'));
-      this.installDependencies({
-        bower: false,
-        npm: true,
-        skipInstall: this.options['skip-install'],
-        //TODO check npm installed
-        callback: (() => this.spawnCommand('npm', ['start']))
-      });
-    } catch (err) {
-      console.log(`chdir: ${err}`);
-    }
   }
 });

@@ -3,16 +3,18 @@ usage: webapp <command> [<args>]
 创建一个基于 backbone 的 web application
 
 命令:
-  new         <appName>           创建一个新的目录并且运行 npm install 和 npm start。
+  new         <appName>           创建项目
   generate    <blueprint> <name>  从模板生成代码
     alias: g
     可用的模板:
       view  <name>  生成 view。
       model <name>  生成 model。
+  run                             启动
+  build                           构建后的文件在 ./dist/tmp
 
 示例:
-  webapp new <appName Default: current directory>
-    创建一个新的目录并且运行 npm install 和 npm start。
+  webapp new spa
+    创建项目
 
   webapp g view <viewName>
     生成 view。

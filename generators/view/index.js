@@ -1,5 +1,6 @@
 const generators = require('yeoman-generator');
 const htmlWiring = require('html-wiring');
+const fs = require('fs');
 
 module.exports = generators.Base.extend({
   constructor: function(arg) {
@@ -7,45 +8,63 @@ module.exports = generators.Base.extend({
     if (arg[0]) {
       this.options.name = arg[0];
     }
-  },
-  writing: function() {
-    const destPath = `${this.config.get('basePath')}/app/web/${this.options.name}`;
-    const data = {
+    this.data = {
       name: this.options.name,
       model: this.config.get(`${this.options.name}Model`)
     };
-
-    [
-      'main.hbs',
-      'main.scss'
-    ].forEach((file) => {
-      this.fs.copyTpl(
-        this.templatePath(file),
-        this.destinationPath(`${destPath}/${file}`),
-        data
-      );
-    });
-
+  },
+  setupEnv: function() {
+    this.viewPath = `app/web/${this.options.name}`;
+    fs.mkdirSync(this.viewPath);
+    fs.mkdirSync(`${this.viewPath}/views`);
+    fs.mkdirSync(`${this.viewPath}/models`);
+    fs.mkdirSync(`${this.viewPath}/templates`);
+    fs.mkdirSync(`${this.viewPath}/styles`);
+  },
+  templates: function() {
+    this.fs.copyTpl(
+      this.templatePath('main.hbs'),
+      this.destinationPath(`${this.viewPath}/templates/main.hbs`),
+      this.data
+    );
+  },
+  scss: function() {
+    this.fs.copyTpl(
+      this.templatePath('main.scss'),
+      this.destinationPath(`${this.viewPath}/styles/main.scss`)
+    );
+  },
+  view: function() {
     this.fs.copyTpl(
       this.templatePath('main.js'),
-      this.destinationPath(`${destPath}/view.js`),
-      data
+      this.destinationPath(`${this.viewPath}/view.js`),
+      this.data
     );
 
     if (this.options.skipChange) {
       return;
     }
-
-    //Update router
-    const routerPath = `${this.config.get('basePath')}/app/routes/main.js`;
+  },
+  updateRouter: function() {
+    const routerPath = 'app/router.js';
     let routerFile = htmlWiring.readFileAsString(routerPath);
-    routerFile = routerFile
-    .replace(/';\n\n/, `';\nimport ${this.options.name} from '../web/${this.options.name}/view';\n\n`)
-    .replace(/}\);\n  }/, `});\n
+    //Import view
+    routerFile = routerFile.replace(/';\n\n/, `';\nimport ${this.options.name} from './web/${this.options.name}/view';\n\n`);
+    //Add route
+    if (routerFile.match(/}\);\n  }/)) {
+      routerFile = routerFile.replace(/}\);\n  }/, `});\n
     this.route('${this.options.name}', '${this.options.name}', function() {
       this.view.destroy();
       this.view = new ${this.options.name}();
     });\n  }`);
+    } else {
+      //First
+      routerFile = routerFile.replace(/\n  }\n/, `
+    this.route('', '${this.options.name}', function() {
+      this.view.destroy();
+      this.view = new ${this.options.name}();
+    });\n  }\n`);
+    }
     this.fs.write(this.destinationPath(routerPath), routerFile);
   }
 });
