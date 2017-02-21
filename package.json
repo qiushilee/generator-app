@@ -4,7 +4,7 @@
   "description": "Create a new base backbone.js web application",
   "main": "generators/app/index.js",
   "bin": {
-    "webapp": "index.js"
+    "webapp": "./index.js"
   },
   "files": [
     "generators/app",
